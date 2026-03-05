@@ -70,35 +70,52 @@ function fillLine(point1,point2, color){
     }}
 }
 
-function scanTri(point1,point2,point3,color){
-    let topPoint =[]
-    let yLevel = 0
-    let minX =0
-    let maxX =0
-    if (point1[1] == point2[1]){
-        yLevel = point1[1]
-        topPoint = point3
-         minX = Math.min(point1[0], point2[0])
+function scanTri(point1i,point2i,point3i,color){
     
-         maxX = Math.max(point1[0], point2[0])
-
-    }else if(point2[1]==point3[1]){
-        topPoint = point1
-        yLevel = point2[1]
-        minX = Math.min(point2[0], point3[0])
-    
-         maxX = Math.max(point2[0], point3[0])
+    let point1 = 0
+    let point2 = 0
+    let point3 = 0
+    if (slope(point1i, point2i) == 0){
+        point3 = point3i
+        point1 = point1i
+        point2 = point2i
+    }else if(slope(point2i,point3i) == 0){
+        point3 = point1i
+        
+        point1 = point3i
+        point2 = point2i
     }else{
-        topPoint = point2
-        yLevel = point1[1]
-        minX = Math.min(point1[0], point3[0])
-    
-         maxX = Math.max(point1[0], point3[0])
+        point3 = point2i
+        point1 = point1i
+        point2 = point3i
     }
-    for(let i = minX; i<maxX; i++){
-    fillLine([topPoint[0], topPoint[1]], [i, yLevel],color)
-   }
      
+    let m1 =  slope(point1, point3)
+    let b1 =  point1[1]- m1*(point1[0])
+    let m2 =  slope(point2, point3)
+    let b2 =  point2[1]- m2*(point2[0])
+    minY = Math.min(point3[1],point1[1])
+    maxY = Math.max(point3[1],point1[1])
+    console.log(b1, m1, b2, m2)
+    
+    for(let y = minY; y<=maxY; y++){
+        if (m1 == Infinity || m1 == -Infinity){
+            x1 = point1[0]
+        }else{x1= (y-b1)/(m1)}
+        
+
+        if (m2 == Infinity || m2 == -Infinity){
+            x1 = point2[0]
+        }else{x2= (y-b2)/(m2)}
+
+        
+        fillLine([x1, y], [x2, y],color)
+        console.log()
+        
+   }
+     //method does not work, change this to use the specified scan line
+
+     //tommorow finish line drawing, filling, 3d projection and z buffering.
 }
 
 function fillTri(point1,point2, point3, color){
@@ -111,6 +128,7 @@ function fillTri(point1,point2, point3, color){
    if (slope(point1,point2) == 0|| slope(point2,point3) == 0||slope(point3,point1) == 0 ){
     // non-joined
     scanTri(point1,point2,point3,color)
+  
    }else{
     // jointed
     console.log("Jointed")
@@ -119,7 +137,7 @@ function fillTri(point1,point2, point3, color){
 
 
 fillTri([200,0],[300,100], [100,100],[255,0,0,255])
-fillLine([0,10],[100,100],[255,0,0,255])
+
 
 context.putImageData(imageData,0,0)
 
